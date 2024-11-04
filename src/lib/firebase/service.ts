@@ -11,6 +11,15 @@ import {
 import app from "./init";
 import bcrypt from "bcrypt";
 
+interface User {
+  id: string;
+  email?: string;
+  password?: string;
+  fullname?: string;
+  phone?: string;
+  role?: string;
+}
+
 const firestore = getFirestore(app);
 
 export async function retrieveData(collectionName: string) {
@@ -67,5 +76,22 @@ export async function signUp(
         callback(false);
         console.log(error);
       });
+  }
+}
+
+export async function SignIn(email: string) {
+  const q = query(collection(firestore, "users"), where("email", "==", email));
+  const snapshot = await getDocs(q);
+  const data = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as User[];
+
+  // Pastikan objek memiliki email dan password sebelum mengembalikan
+  if (data.length > 0 && data[0].email && data[0].password) {
+    return data[0] as User; // Cast ke tipe User
+  } else {
+    console.error("User found, but required fields are missing");
+    return null;
   }
 }
