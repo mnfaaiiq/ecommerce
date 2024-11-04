@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignIn } from "@/lib/firebase/service";
 import { compare } from "bcrypt";
 import NextAuth, { NextAuthOptions } from "next-auth";
@@ -24,9 +25,8 @@ const authOptions: NextAuthOptions = {
 
         try {
           const user = await SignIn(email);
-          console.log("User found:", user);
 
-          if (user) {
+          if (user && typeof user.password === "string") {
             const passwordConfirm = await compare(password, user.password);
             if (passwordConfirm) {
               return user;
@@ -35,7 +35,7 @@ const authOptions: NextAuthOptions = {
               return null;
             }
           } else {
-            console.error("User not found");
+            console.error("User not found or password missing in user object");
             return null;
           }
         } catch (error) {
@@ -46,27 +46,28 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, account, user }: any) {
       if (account?.provider === "credentials" && user) {
         token.email = user.email;
         token.fullname = user.fullname;
         token.phone = user.phone;
-        token.role = user.role; // Update di sini jika `user.role` ada
+        token.role = user.role;
       }
       return token;
     },
 
     async session({ session, token }: any) {
-      if ("email" in token) {
+      if (token.email) {
         session.user.email = token.email;
       }
-      if ("fullname" in token) {
+      if (token.fullname) {
         session.user.fullname = token.fullname;
       }
-      if ("phone" in token) {
+      if (token.phone) {
         session.user.phone = token.phone;
       }
-      if ("role" in token) {
+      if (token.role) {
         session.user.role = token.role;
       }
 
