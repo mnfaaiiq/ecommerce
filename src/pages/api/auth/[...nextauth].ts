@@ -24,18 +24,24 @@ const authOptions: NextAuthOptions = {
         };
 
         try {
+          console.log("Attempting to sign in user:", email);
           const user = await SignIn(email);
+          console.log("User data received:", user);
 
           if (user && typeof user.password === "string") {
             const passwordConfirm = await compare(password, user.password);
             if (passwordConfirm) {
+              console.log("Authentication successful for:", email);
               return user;
             } else {
-              console.error("Password mismatch");
+              console.error("Password mismatch for user:", email);
               return null;
             }
           } else {
-            console.error("User not found or password missing in user object");
+            console.error(
+              "User not found or password missing in user object:",
+              user
+            );
             return null;
           }
         } catch (error) {
