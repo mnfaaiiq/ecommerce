@@ -3,6 +3,7 @@ import { SignIn } from "@/lib/firebase/service";
 import { compare } from "bcrypt";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -52,7 +53,6 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, account, user }: any) {
       if (account?.provider === "credentials" && user) {
         token.email = user.email;
@@ -63,7 +63,7 @@ const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, token }: any) {
+    async session({ session, token }: { session: any; token: any }) {
       if (token.email) {
         session.user.email = token.email;
       }
@@ -85,4 +85,15 @@ const authOptions: NextAuthOptions = {
   },
 };
 
-export default NextAuth(authOptions);
+// Create a handler that accepts both GET and POST methods
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Ensure we handle both GET and POST requests
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  return await NextAuth(req, res, authOptions);
+}
+
+export default handler;
