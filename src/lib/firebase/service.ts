@@ -37,7 +37,7 @@ export async function signUp(
     phone: string;
     role?: string;
   },
-  callback
+  callback: (status: boolean) => void
 ) {
   const q = query(
     collection(firestore, "users"),
