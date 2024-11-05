@@ -4,11 +4,9 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 
 const RegisterView = () => {
-  const { push } = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const { push } = useRouter();
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
@@ -20,11 +18,10 @@ const RegisterView = () => {
       phone: form.phone.value,
       password: form.password.value,
     };
+
     const result = await fetch("/api/user/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
@@ -40,53 +37,7 @@ const RegisterView = () => {
 
   return (
     <div className={styles.register}>
-      {/* <h1 className={styles.register__title}>Register</h1> */}
       <div className={styles.register__form}>
-        {/* {error && <p className={styles.register__error}>{error}</p>} */}
-        {/* <form action="" onSubmit={handleSubmit}>
-          <div className={`${styles.register__form__item} flex flex-col`}>
-            <label htmlFor="fullname">Fullname</label>
-            <input
-              type="text"
-              name="fullname"
-              id="fullname"
-              className={`${styles.register__form__item} bg-gray-200 mb-2 mt-2 h-[30px] p-3`}
-            />
-          </div>
-          <div className={`${styles.register__form__item} flex flex-col`}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="text"
-              name="email"
-              id="email"
-              className={`${styles.register__form__item} bg-gray-200 mb-2 mt-2 h-[30px] p-3`}
-            />
-          </div>
-          <div className={`${styles.register__form__item} flex flex-col`}>
-            <label htmlFor="phone">Phone</label>
-            <input
-              type="text"
-              name="phone"
-              id="phone"
-              className={`${styles.register__form__item} bg-gray-200 mb-2 mt-2 h-[30px] p-3`}
-            />
-          </div>
-          <div className={`${styles.register__form__item} flex flex-col`}>
-            <label htmlFor="password">password</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              className={`${styles.register__form__item} bg-gray-200 mb-2 mt-2 h-[30px] p-3`}
-            />
-          </div>
-          <button
-            type="submit"
-            className={`${styles.register__button} hover:opacity-85 transition-all`}
-          >
-            {isLoading ? "Loading..." : "Register"}
-          </button>
-        </form> */}
         <form action="" onSubmit={handleSubmit}>
           <div className="mb-12">
             <h3 className="text-gray-800 text-3xl font-bold text-center">
@@ -96,7 +47,10 @@ const RegisterView = () => {
           </div>
 
           <div>
-            <label className="text-gray-800 text-xs block mb-2">
+            <label
+              htmlFor="fullname"
+              className="text-gray-800 text-xs block mb-2"
+            >
               Full Name
             </label>
             <div className="relative flex items-center">
@@ -125,7 +79,9 @@ const RegisterView = () => {
           </div>
 
           <div className="mt-8">
-            <label className="text-gray-800 text-xs block mb-2">Email</label>
+            <label htmlFor="email" className="text-gray-800 text-xs block mb-2">
+              Email
+            </label>
             <div className="relative flex items-center">
               <input
                 name="email"
@@ -148,13 +104,13 @@ const RegisterView = () => {
                   </clipPath>
                 </defs>
                 <g
-                  clip-path="url(#a)"
+                  clipPath="url(#a)"
                   transform="matrix(1.33 0 0 -1.33 0 682.667)"
                 >
                   <path
                     fill="none"
-                    stroke-miterlimit="10"
-                    stroke-width="40"
+                    strokeMiterlimit="10"
+                    strokeWidth="40"
                     d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
                     data-original="#000000"
                   ></path>
@@ -167,7 +123,9 @@ const RegisterView = () => {
             </div>
           </div>
           <div className="mt-8">
-            <label className="text-gray-800 text-xs block mb-2">Phone</label>
+            <label htmlFor="phone" className="text-gray-800 text-xs block mb-2">
+              Phone
+            </label>
             <div className="relative flex items-center">
               <input
                 name="phone"
@@ -188,9 +146,9 @@ const RegisterView = () => {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M18.427 14.768 17.2 13.542a1.733 1.733 0 0 0-2.45 0l-.613.613a1.732 1.732 0 0 1-2.45 0l-1.838-1.84a1.735 1.735 0 0 1 0-2.452l.612-.613a1.735 1.735 0 0 0 0-2.452L9.237 5.572a1.6 1.6 0 0 0-2.45 0c-3.223 3.2-1.702 6.896 1.519 10.117 3.22 3.221 6.914 4.745 10.12 1.535a1.601 1.601 0 0 0 0-2.456Z"
                 />
               </svg>
@@ -198,7 +156,12 @@ const RegisterView = () => {
           </div>
 
           <div className="mt-8">
-            <label className="text-gray-800 text-xs block mb-2">Password</label>
+            <label
+              htmlFor="password"
+              className="text-gray-800 text-xs block mb-2"
+            >
+              Password
+            </label>
             <div className="relative flex items-center">
               <input
                 name="password"

@@ -11,7 +11,7 @@ import {
 import app from "./init";
 import bcrypt from "bcrypt";
 
-interface User {
+export interface User {
   id: string;
   email?: string;
   password?: string;
@@ -79,7 +79,7 @@ export async function signUp(
   }
 }
 
-export async function SignIn(email: string) {
+export async function SignIn(email: string): Promise<User | null> {
   const q = query(collection(firestore, "users"), where("email", "==", email));
   const snapshot = await getDocs(q);
   const data = snapshot.docs.map((doc) => ({
@@ -89,7 +89,7 @@ export async function SignIn(email: string) {
 
   // Pastikan objek memiliki email dan password sebelum mengembalikan
   if (data.length > 0 && data[0].email && data[0].password) {
-    return data[0] as User; // Cast ke tipe User
+    return data[0]; // Return User directly
   } else {
     console.error("User found, but required fields are missing");
     return null;

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SignIn } from "@/lib/firebase/service";
-import { compare } from "bcrypt";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcrypt";
+import { SignIn, User } from "@/lib/firebase/service";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -14,7 +15,7 @@ const authOptions: NextAuthOptions = {
       type: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -23,36 +24,24 @@ const authOptions: NextAuthOptions = {
           password: string;
         };
 
-        try {
-          console.log("Attempting to sign in user:", email);
-          const user = await SignIn(email);
-          console.log("User data received:", user);
+        // Fetch user details
+        const user = (await SignIn(email)) as User;
 
-          if (user && typeof user.password === "string") {
-            const passwordConfirm = await compare(password, user.password);
-            if (passwordConfirm) {
-              console.log("Authentication successful for:", email);
-              return user;
-            } else {
-              console.error("Password mismatch for user:", email);
-              throw new Error("Invalid credentials");
-            }
-          } else {
-            console.error(
-              "User not found or password missing in user object:",
-              user
-            );
-            throw new Error("User not found");
+        if (user && typeof user.password === "string") {
+          // Ensure user.password is a string
+          const passwordConfirm = await compare(password, user.password);
+          if (passwordConfirm) {
+            return user;
           }
-        } catch (error) {
-          console.error("Error during authentication:", error);
-          throw error;
+          return null;
+        } else {
+          return null;
         }
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }: any) {
+    async jwt({ token, account, profile, user }: any) {
       if (account?.provider === "credentials" && user) {
         token.email = user.email;
         token.fullname = user.fullname;
@@ -61,41 +50,16 @@ const authOptions: NextAuthOptions = {
       }
       return token;
     },
-
-    async session({ session, token }: { session: any; token: any }) {
-      if (token.email) {
-        session.user.email = token.email;
-      }
-      if (token.fullname) {
-        session.user.fullname = token.fullname;
-      }
-      if (token.phone) {
-        session.user.phone = token.phone;
-      }
-      if (token.role) {
-        session.user.role = token.role;
-      }
+    async session({ session, token }: any) {
+      session.user.email = token.email;
+      session.user.fullname = token.fullname;
+      session.user.phone = token.phone;
+      session.user.role = token.role;
       return session;
     },
   },
   pages: {
     signIn: "/auth/login",
-    error: "/auth/login",
-  },
-  // Add these configurations to handle redirects
-  useSecureCookies: process.env.NODE_ENV === "production",
-  cookies: {
-    sessionToken: {
-      name: `${
-        process.env.NODE_ENV === "production" ? "__Secure-" : ""
-      }next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
   },
 };
 

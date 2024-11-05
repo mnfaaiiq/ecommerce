@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from "next/link";
 import styles from "./Login.module.scss";
 import { FormEvent, useState } from "react";
@@ -5,58 +6,37 @@ import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 
 const LoginView = () => {
-  const { push, query } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { push, query } = useRouter();
 
-  // Pastikan callbackUrl valid dan aman
-  const callbackUrl =
-    typeof query.callbackUrl === "string" ? query.callbackUrl : "/";
-
+  const callbackUrl: any = query.callbackUrl || "/";
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setError("");
-
-    const form = event.currentTarget;
-    const email = form.email.value;
-    const password = form.password.value;
-
+    const form = event.target as HTMLFormElement;
     try {
-      // Validasi input
-      if (!email || !password) {
-        throw new Error("Email dan password harus diisi");
-      }
-
       const res = await signIn("credentials", {
         redirect: false,
-        email,
-        password,
+        email: form.email.value,
+        password: form.password.value,
         callbackUrl,
       });
-
-      if (!res) {
-        throw new Error("Terjadi kesalahan pada autentikasi");
-      }
-
-      if (res.error) {
-        setError(res.error);
-        return;
-      }
-
-      // Reset form dan redirect jika berhasil
-      form.reset();
-      push(callbackUrl);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      if (!res?.error) {
+        setIsLoading(false);
+        form.reset();
+        push(callbackUrl);
       } else {
-        setError("Terjadi kesalahan yang tidak diketahui");
+        setIsLoading(false);
+        setError("Email or password is incorrect");
       }
-    } finally {
+    } catch (error) {
       setIsLoading(false);
+      setError(`Email or password is incorrect ${error}`);
     }
   };
+
   return (
     <div className={styles.login}>
       <div className={styles.login__form}>
