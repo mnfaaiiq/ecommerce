@@ -3,8 +3,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
-import { loginWithGoogle, SignIn, User } from "@/lib/firebase/service";
 import GoogleProvider from "next-auth/providers/google";
+import { loginWithGoogle, SignIn, User } from "@/services/auth";
 
 const authOptions: NextAuthOptions = {
   session: {

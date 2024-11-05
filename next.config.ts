@@ -6,6 +6,17 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   // tambahkan konfigurasi lain di sini jika diperlukan
+  webpack: (config) => {
+    config.resolve = {
+      ...config.resolve,
+      fallback: {
+        fs: false,
+        path: false,
+        os: false,
+      },
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

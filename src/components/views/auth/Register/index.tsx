@@ -3,6 +3,7 @@ import styles from "./Register.module.scss";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Input from "@/components/ui/Input";
+import { authServices } from "@/lib/firebase/service";
 
 const RegisterView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,11 +21,7 @@ const RegisterView = () => {
       password: form.password.value,
     };
 
-    const result = await fetch("/api/user/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    const result = await authServices.registerAccount(data);
 
     if (result.status === 200) {
       form.reset();
