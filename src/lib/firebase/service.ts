@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   addDoc,
   collection,
@@ -93,5 +95,27 @@ export async function SignIn(email: string): Promise<User | null> {
   } else {
     console.error("User found, but required fields are missing");
     return null;
+  }
+}
+
+export async function loginWithGoogle(data: any, callback: Function) {
+  const q = query(
+    collection(firestore, "users"),
+    where("email", "==", data.email)
+  );
+
+  const snapshot = await getDocs(q);
+  const user = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  if (user.length > 0) {
+    callback(user[0]);
+  } else {
+    data.role = "member";
+    await addDoc(collection(firestore, "user"), data).then(() => {
+      callback(data);
+    });
   }
 }

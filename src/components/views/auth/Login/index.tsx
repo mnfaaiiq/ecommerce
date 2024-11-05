@@ -4,6 +4,7 @@ import styles from "./Login.module.scss";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -123,6 +124,15 @@ const LoginView = () => {
               className="w-full shadow-xl py-2.5 px-5 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition-all"
             >
               {isLoading ? "Loading..." : "Login"}
+            </button>
+            <div className="bg-slate-500 h-0.5 w-full mt-3" />
+            <button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl, redirect: false })}
+              className="w-full shadow-xl mt-3 py-2.5 px-5 text-sm font-semibold tracking-wider rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none transition-all flex items-center justify-center"
+            >
+              <FcGoogle className="text-2xl mr-2" />
+              <p className="text-center items-center">Login With Google</p>
             </button>
             <p className="text-gray-800 text-sm mt-8 text-center">
               Don{"'"}t have an account? Sign up{" "}
