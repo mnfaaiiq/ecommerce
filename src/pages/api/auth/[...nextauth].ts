@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignIn } from "@/lib/firebase/service";
 import { compare } from "bcrypt";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextApiRequest, NextApiResponse } from "next";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -36,24 +34,24 @@ const authOptions: NextAuthOptions = {
               return user;
             } else {
               console.error("Password mismatch for user:", email);
-              return null;
+              throw new Error("Invalid credentials");
             }
           } else {
             console.error(
               "User not found or password missing in user object:",
               user
             );
-            return null;
+            throw new Error("User not found");
           }
         } catch (error) {
           console.error("Error during authentication:", error);
-          return null;
+          throw error;
         }
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }: any) {
+    async jwt({ token, account, user }) {
       if (account?.provider === "credentials" && user) {
         token.email = user.email;
         token.fullname = user.fullname;
@@ -76,24 +74,28 @@ const authOptions: NextAuthOptions = {
       if (token.role) {
         session.user.role = token.role;
       }
-
       return session;
     },
   },
   pages: {
     signIn: "/auth/login",
+    error: "/auth/login",
+  },
+  // Add these configurations to handle redirects
+  useSecureCookies: process.env.NODE_ENV === "production",
+  cookies: {
+    sessionToken: {
+      name: `${
+        process.env.NODE_ENV === "production" ? "__Secure-" : ""
+      }next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
 };
 
-// Create a handler that accepts both GET and POST methods
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Ensure we handle both GET and POST requests
-  if (req.method !== "GET" && req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
-
-  return await NextAuth(req, res, authOptions);
-}
-
-export default handler;
+export default NextAuth(authOptions);
