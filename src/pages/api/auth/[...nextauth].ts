@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignIn } from "@/lib/firebase/service";
 import { compare } from "bcrypt";
 import NextAuth, { NextAuthOptions } from "next-auth";
@@ -51,7 +52,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user }: any) {
       if (account?.provider === "credentials" && user) {
         token.email = user.email;
         token.fullname = user.fullname;
