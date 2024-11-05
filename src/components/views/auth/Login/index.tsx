@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
 
 const LoginView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -109,23 +108,22 @@ const LoginView = () => {
           </Input>
 
           <div className="mt-8">
-            <Button type="submit" variant="blue">
+            <button
+              type="submit"
+              className={`w-full shadow-xl mt-3 py-2.5 px-5 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition-all flex items-center justify-center cursor-pointer`}
+            >
               {isLoading ? "Loading..." : "Login"}
-            </Button>
+            </button>
 
             <div className="bg-slate-500 h-0.5 w-full mt-3" />
-            <Button
-              variant="green"
+            <button
               type="button"
               onClick={() => signIn("google", { callbackUrl, redirect: false })}
+              className={`w-full shadow-xl mt-3 py-2.5 px-5 text-sm font-semibold tracking-wider rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none transition-all flex items-center justify-center cursor-pointer`}
             >
-              {
-                <>
-                  <FcGoogle className="text-2xl mr-2" />
-                  <p className="text-center items-center">Login With Google</p>
-                </>
-              }
-            </Button>
+              <FcGoogle className="text-2xl mr-2" />
+              <p className="text-center items-center">Login With Google</p>
+            </button>
 
             <p className="text-gray-800 text-sm mt-8 text-center">
               Don{"'"}t have an account? Sign up{" "}
