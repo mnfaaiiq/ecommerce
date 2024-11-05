@@ -47,6 +47,8 @@ export async function signUp(
     password: string;
     phone: string;
     role?: string;
+    created_at?: Date;
+    updated_at?: Date;
   },
   callback: (status: boolean) => void
 ) {
@@ -69,6 +71,8 @@ export async function signUp(
     }
 
     userData.password = await bcrypt.hash(userData.password, 10);
+    userData.created_at = new Date();
+    userData.updated_at = new Date();
 
     await addDoc(collection(firestore, "users"), userData)
       .then(() => {
@@ -98,7 +102,10 @@ export async function SignIn(email: string): Promise<User | null> {
   }
 }
 
-export async function loginWithGoogle(data: any, callback: Function) {
+export async function loginWithGoogle(
+  data: { email: string; role?: string },
+  callback: Function
+) {
   const q = query(
     collection(firestore, "users"),
     where("email", "==", data.email)

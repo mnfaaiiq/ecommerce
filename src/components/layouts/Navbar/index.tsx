@@ -1,13 +1,12 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
-import styles from "./Navbar.module.scss";
 
 const Navbar = () => {
   const { data } = useSession();
   return (
-    <div className={styles.navbar}>
+    <div className="bg-black flex items-center justify-end w-full h-16 text-white p-5">
       <button
-        className={styles.navbar__button}
+        className="bg-white py-3 px-4 cursor-pointer text-black rounded-lg"
         onClick={() => (data ? signOut() : signIn())}
       >
         {data ? "Logout" : "Login"}
