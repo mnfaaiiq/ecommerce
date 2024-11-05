@@ -3,7 +3,6 @@ import styles from "./Register.module.scss";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
 
 const RegisterView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -156,9 +155,12 @@ const RegisterView = () => {
           </Input>
 
           <div className="mt-8">
-            <Button type="submit" variant="blue">
+            <button
+              type="submit"
+              className={`w-full shadow-xl mt-3 py-2.5 px-5 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition-all flex items-center justify-center cursor-pointer`}
+            >
               {isLoading ? "Loading..." : "Register"}
-            </Button>
+            </button>
 
             <p className="text-gray-800 text-sm mt-8 text-center">
               Already have an account?{" "}
